@@ -1,0 +1,262 @@
+<html>
+
+<head>
+    <title>IoT SMART SERVER</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js" type="text/javascript">
+    </script>
+    <script type="text/javascript" language="javascript">
+        var mqtt;
+        var reconnectTimeout = 2000;
+        var host = "test.mosquitto.org";
+        var port = 8081
+
+        function onFailure(message) {
+            console.log("Connection Attempt to Host " + host + "Failed" + "<br>");
+            // reconnect after a failure
+            setTimeout(MQTTconnect, reconnectTimeout);
+        }
+
+        function onMessageArrived(msg) {
+            out_msg = "Message received " + msg.payloadString + "<br>";
+            out_msg = out_msg + "Topic " + msg.destinationName + "<br>";
+            console.log(out_msg); // 관리자
+            //document.write(out_msg); // 사용자
+            
+            if(msg.destinationName == "TLS_MS"){
+                val = msg.payloadString;
+                if(val == 1){
+                    
+                }
+            }
+
+        }
+
+        function onConnect() {
+            // Once a connection has been made, make a subscription and send a message.
+            //document.write("Connected " + "<br>");
+            console.log("Connected " + "<br>");
+            mqtt.subscribe("IoTSystem");
+            mqtt.subscribe("EXISTFEED_MS");
+            mqtt.subscribe("TIMEFEED_MS");
+            mqtt.subscribe("STAYTIME_MS");
+            mqtt.subscribe("TLS_MS");
+            mqtt.subscribe("TEMP_MS");
+            mqtt.subscribe("DUST_MS");
+            mqtt.subscribe("GAS_MS");
+            mqtt.subscribe("HUMI_MS");
+            mqtt.subscribe("FLAME_MS");
+        
+            message = new Paho.MQTT.Message("Hello World");
+            // Publish message to topic "IoTSystem"
+            message.destinationName = "IoTSystem";
+            mqtt.send(message);
+        }
+
+        function MQTTconnect() {
+            var x = Math.floor(Math.random() * 10000);
+            var cname = "orderform-" + x;
+            // create client object
+            mqtt = new Paho.MQTT.Client(host, port, cname);
+            //document.write("connecting to " + host + " " + port + "<br>");
+            console.log("connecting to " + host + " " + port + "<br>");
+            var options = {
+                timeout: 3,
+                onSuccess: onConnect,
+                onFailure: onFailure,
+            };
+            mqtt.onMessageArrived = onMessageArrived
+            // Connect
+            mqtt.connect(options);
+        }
+    </script>
+</head>
+
+<body>
+    <script>
+        // Call function
+        MQTTconnect();
+    </script>
+
+    <style>
+        img {
+            transition: transform 100ms ease-in-out, opacity 100ms ease-in-out;
+        }
+    </style>
+
+    <script src="iot.js"></script>
+
+    <center>
+        <h1>SMART FEEDER & PET HEALTH CARE & HOME</h>
+    </center>
+    <br><br>
+
+    <center>
+        <table border="0" cellpadding="25%" width="100%">
+            <tr>
+                <td>
+                    <h2 align="left">FEEDER</h2>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <center>
+                        <h3>
+                            FEED</h><br><br>
+                            <img src="img/feed.png" name="FEED"><br><br>
+                            <input type="button" value="ON" id="FEED" onclick="FEED();">
+
+                    </center>
+                </td>
+
+                <td>
+                    <center>
+                        <h3>
+                            TIME FEED</h><br><br>
+                            <img src="img/time_feed.png" name="TF"><br><br>
+                            <input type="button" id="TF_val" value="Undetected" style="border:none;">
+                    </center>
+                </td>
+
+                <td>
+                    <center>
+                        <h3>
+                            EXIST FEED</h><br><br>
+                            <img src="img/no_exist_feed.png" name="EXF"><br><br>
+                    </center>
+
+                </td>
+
+
+            </tr>
+        </table>
+
+
+        <tr>
+            <td>
+                <center>
+                    <hr width="95%">
+                </center>
+            </td>
+        </tr>
+
+        <table border="0" cellpadding="25%" width="100%">
+
+            <tr>
+                <td>
+                    <h2 align="left">PET HEALTH CARE</h2>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <center>
+                        <h3>
+                            STAY_TIME</h><br><br>
+                            <img src="img/stay_time.png" name="STAYTIME"><br><br>
+                            <input type="button" id="ST_val" value="Undetected" style="border:none;">
+                    </center>
+                </td>
+
+                <td>
+                    <center>
+                        <h3>
+                            TOO_LONG_STAY</h><br><br>
+                            <img src="img/no_too_stay_long.png" name="TLS"><br><br>
+                            <input type="button" id="ALARM_val" value="OFF_ALARM" onclick="ALARMOFF();">
+                    </center>
+                </td>
+
+                <td>
+                </td>
+
+            </tr>
+        </table>
+
+        <tr>
+            <td>
+
+                <hr width="95%" align="center">
+
+            </td>
+        </tr>
+
+        <table border="0" cellpadding="25%" width="100%">
+            <tr>
+
+                <td>
+                    <h2 align="left">SMART HOME</h2>
+                </td>
+            </tr>
+
+            <tr>
+
+
+                <td>
+                    <center>
+                        <h3>
+                            <h3>
+                                Temperature</h><br><br>
+                                <div style="postion:relative; background:url(img/temp.png) no-repeat; width:128px;">
+                                    <img src="img/temp_ov.png" name="TEMPOV" style="opacity:0.5"><br><br>
+                                    <input type="button" id="TEMP_val" value="Undetected" style="border:none;">
+                    </center>
+                </td>
+
+                <td>
+                    <center>
+                        <h3>Dust</h><br><br>
+                            <img src="img/dust.png" name="DUST"><br><br>
+                            <input type="button" id="DUST_val" value="Undetected" style="border:none;">
+                    </center>
+                </td>
+
+                <td>
+                    <center>
+                        <h3>
+                            Humidity</h><br><br>
+                            <div style="postion:relative; background:url(img/humi.png) no-repeat; width:128px;">
+                                <img src="img/humi_ov.png" name="HUMIOV"
+                                    style="position:relative; z-index:5; opacity:0.5;">
+                            </div><br><br>
+                            <input type="button" id="HUMI_val" value="Undetected" style="border:none;">
+                    </center>
+                </td>
+
+            </tr>
+            <tr>
+
+                <td>
+                    <center>
+                        <h3>
+                            Flame Sensor</h><br><br>
+                            <img src="img/flame_off.png" name="FLAME_MS"><br><br>
+                    </center>
+                </td>
+
+                <td>
+                    <center>
+                        <h3>Gas Sensor</h><br><br>
+                            <img src="img/gas.png" name="GAS_MS"><br><br>
+                            <input type="button" id="GAS_val" value="Undetected" style="border:none;">
+                    </center>
+                </td>
+
+                <td>
+                    <center>
+                        <h3>
+                            DC Motor</h><br><br>
+                            <img src="img/dcm_off.png" name="DCM_MS"><br><br>
+                            <input type="button" value="ON" id="DCM_ON" onclick="DCMON();">
+                            <input type="button" value="OFF" id="DCM_OFF" onclick="DCMOFF();">
+                    </center>
+                </td>
+
+            </tr>
+
+
+        </table>
+    </center>
+
+</body>
+
+</html>
